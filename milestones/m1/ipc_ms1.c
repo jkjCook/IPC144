@@ -70,79 +70,73 @@ int main(void) {
 void welcome(void) {
 	printf("---=== Grocery Inventory System ===---\n\n");
 }
+
 void prnTitle(void) {
 	printf(">Row |SKU| Name               | Price  |Taxed| Qty | Min |   Total    |Atn<\n");
 	printf(">----+---+--------------------+--------+-----+-----+-----+------------|---<\n");
 }
+
 void prnFooter(double gTotal) {
 	printf(">--------------------------------------------------------+----------------<\n");
-	if (gTotal >= 0) {																				//Print if gTotal is > 0
+	if (gTotal >= 0)
 		printf(">                                           Grand Total: | %12.2lf\n", gTotal);
-	}
-	}
+}
+
 void clrKyb(void) {
 	char choice = 'a';
-	
-	while (choice != '\n') {				//Loops until it reaches a return
+	while (choice != '\n')
 		scanf("%c", &choice);
-	}
 }
+
 void pause(void) {
 	printf(">Press <ENTER> to continue...<");
-	clrKyb();										//Accepts an enter to end the function
+	clrKyb();
 }
+
 int getInt(void) {
 	int validInteger, counter = 0;
 	char validChar = ' ';
-
 	while (counter == 0) {
-		
-		scanf("%d%c", &validInteger, &validChar);				//Read in your integer followed by enter
-		if (validChar != '\n') {								//If the character after your int isn't a space
-			clrKyb();											//Clear the keyboard
-			printf("Invalid integer, please try again: ");		//Error message
-		}
-		else {													//To break the loop if conditions are met
-			counter++;
-		}
+		scanf("%d%c", &validInteger, &validChar);
+		if (validChar != '\n') {								
+			clrKyb();
+			printf("Invalid integer, please try again: ");
+		} else counter++;
 	}
-	return validInteger;										//Return the valid integer 
-	}
+	return validInteger;
+}
+
 double getDbl(void) {
 	double validDouble;
 	int counter = 0;
 	char validChar = ' ';
-
 	while (counter == 0) {
-
-		scanf("%lf%c", &validDouble, &validChar);				//Read in your double followed by enter
-		if (validChar != '\n') {								//If the character after your int isn't a space
-			clrKyb();											//Clear the keyboard
-			printf("Invalid number, please try again: ");		//Error message
+		scanf("%lf%c", &validDouble, &validChar);
+		if (validChar != '\n') {
+			clrKyb();
+			printf("Invalid number, please try again: ");
 		}
-		else {													//To break the loop if conditions are met
-			counter++;
-		}
+		else counter++;
 	}
-	return validDouble;											//Return the valid double
+	return validDouble;
 }
+
 int getIntLimited(int lowerLimit, int upperLimit) {
 	int choice = 0;
-
-	scanf("%d", &choice);														//Prompt for an integer
-	while (choice < lowerLimit || choice > upperLimit) {						//Checking if the integer is in the correct range
-		printf("Invalid value, %d < value < %d: ", lowerLimit, upperLimit);		//If it's not it prompts you again and tells you 
-		scanf("%d", &choice);													//The correct range
+	scanf("%d", &choice);
+	while (choice < lowerLimit || choice > upperLimit) {
+		printf("Invalid value, %d < value < %d: ", lowerLimit, upperLimit);
+		scanf("%d", &choice);
 	}
 	return choice;
 }
+
 double getDblLimited(double lowerLimit, double upperLimit) {
 	double choice = 0;
-
-	scanf("%lf", &choice);														//Prompt for a floating point
-	while (choice < lowerLimit || choice > upperLimit) {						//Checking if the floating point is in the correct range
-		printf("Invalid value, %lf < value < %lf: ", lowerLimit, upperLimit);	//If it's not it prompts you again and tells you 
-		scanf("%lf", &choice);													//The correct range
+	scanf("%lf", &choice);
+	while (choice < lowerLimit || choice > upperLimit) {
+		printf("Invalid value, %lf < value < %lf: ", lowerLimit, upperLimit);
+		scanf("%lf", &choice);
 	}
 	return choice;
 }

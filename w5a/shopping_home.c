@@ -5,120 +5,87 @@
 
 struct Item {
 	int sku_;
+  int quantity_;
 	float price_;
-	int quantity_;
 };
 
-int menu(void) {  // The function for the menu, displays, prompts for a choice and returns the choice 
-
+int menu(void) { 
 	int choice = 0;
-
 	printf("Please select from the following options:\n");
-
 	do {
-
 		printf("1) Display the inventory.\n");
 		printf("2) Add to shop.\n");
 		printf("3) Price check.\n");
 		printf("0) Exit.\n");
 		printf("Select:");
 		scanf("%d", &choice);
-
-		if (choice > 3 || choice < 0) {
+		if (choice > 3 || choice < 0)
 			printf("Invalid input, try again: Please select from the following options:\n");
-
-		}
-
 	} while (choice < 0 || choice > 3);
-
 	return choice;
-
 }
 
 
 int main(void) {
-
 	struct Item item[MAX_ITEMS];
 	int sku, quantity, size = 0, i, end = 0, counter = 0, counter2 = 0;
 	float price;
-
 	printf("Welcome to the Shop\n===================\n");
-
 	while (end == 0) {
-
 		switch (menu()) {
 		case 2:
-			printf("Please input a SKU number:");    //adding items to the item array and checking if they already exist
+			printf("Please input a SKU number:");
 			scanf("%d", &sku);
 			printf("Quantity:");
 			scanf("%d", &quantity);
-
 			if (size == MAX_ITEMS) {
 				printf("The inventory is full\n");
 				counter++;
 			}
-			for (i = 0; i <= size; i++) {       //checking if the item is in the array already
-
+			for (i = 0; i <= size; i++) {
 				if (sku == item[i].sku_) {
 					printf("The item exists in the repository, quanity is updated.\n");
 					item[i].quantity_ += quantity;
-
 					counter++;
 				}
-
 			}
-
-			if (counter == 0) {						//checks if the item has been found and if it wasn't then it asks price 
-				printf("Price:");					//and sets the elements of the array
+			if (counter == 0) {						
+				printf("Price:");
 				scanf("%f", &price);
-
 				item[size].sku_ = sku;
 				item[size].quantity_ = quantity;
 				item[size].price_ = price;
-
 				printf("The item is successfully added to the inventory.\n");
-
-				size++;								//increasing the amount of items in the array so it knows when it's full
+				size++;
 			}
-
-			counter = 0;                            //resetting the counter so that when it starts again the if statements will work
-
+			counter = 0;
 			break;
-
 		case 1:
-			printf("\n\nInventory\n=========================================\n");		//displaying the inventory
-			printf("Sku         Price       Quanity\n");								//I had to do - 1 for size because it would print an extra line
-
+			printf("\n\nInventory\n=========================================\n");
+			printf("Sku         Price       Quanity\n");
 			for (i = 0; i <= size - 1; i++) {
 				printf("%01d%13.2f%8d         \n", item[i].sku_, item[i].price_, item[i].quantity_);
 			}
-
 			printf("=========================================\n");
 			break;
 		case 3:
-			printf("Please input the sku number of the item:\n");			//checking if the item is in the array
-			scanf("%d", &sku);												//then checking what the price of the item is
-
+			printf("Please input the sku number of the item:\n");
+			scanf("%d", &sku);
 			for (i = 0; i <= size; i++) {
 				if (sku == item[i].sku_) {
 					printf("Item %d costs $%0.2f\n", item[i].sku_, item[i].price_);
 					counter2++;
 				}
 			}
-
-			if (counter2 == 0) {
+			if (counter2 == 0)
 				printf("Item does not exist in the shop! Please try again.\n");
-			}
-
 			counter2 = 0;
 			break;
-
 		case 0:
-			printf("Good bye!\n");			//ending the program
+			printf("Good bye!\n");
 			end = 1;
 			break;
 		}
 	}
 	return 0;
-
 }

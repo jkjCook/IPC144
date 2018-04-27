@@ -2,8 +2,6 @@
 
 #include <stdio.h>
 #include <ctype.h>
-/***************************************************************
-Tester Function prototypes and information, DO NOT MODIFY */
 
 void searchTest();
 void updateTest();
@@ -44,224 +42,191 @@ struct Item GI[21] = {
 };
 int GNoOfRecs = 20;
 
-/**************************************************************/
-
-/*************************************************************
-Student Milestone 3 definitions and prototypes go here:
-(Do not copy struct Item since it is already implimented above*/
 #define LINEAR 1
 #define FORM 0
 #define STOCK 1
 #define CHECKOUT 0
+#define MAX_ITEM_NO 21
+#define MAX_QTY 999
+#define SKU_MAX 999
+#define SKU_MIN 100
 const int TAX = 0.13;
 
 void welcome(void) {
 	printf("---=== Grocery Inventory System ===---\n\n");
 }
+
 void prnTitle(void) {
 	printf("Row |SKU| Name               | Price  |Taxed| Qty | Min |   Total    |Atn\n");
 	printf("----+---+--------------------+--------+-----+-----+-----+------------|---\n");
 }
+
 void prnFooter(double gTotal) {
 	printf("--------------------------------------------------------+----------------\n");
-	if (gTotal >= 0) {																				//Print if gTotal is > 0
+	if (gTotal >= 0)
 		printf("                                           Grand Total: | %11.2lf\n", gTotal);
-	}
 }
+
 void clrKyb(void) {
 	char choice = 'a';
-
-	while (choice != '\n') {				//Loops until it reaches a return
+	while (choice != '\n')
 		scanf("%c", &choice);
-	}
 }
+
 void pause(void) {
 	printf("Press <ENTER> to continue...");
-	clrKyb();										//Accepts an enter to end the function
+	clrKyb();
 }
+
 int getInt(void) {
 	int validInteger, counter = 0;
 	char validChar = ' ';
-
 	while (counter == 0) {
-
-		scanf("%d%c", &validInteger, &validChar);				//Read in your integer followed by enter
-		if (validChar != '\n') {								//If the character after your int isn't a space
-			clrKyb();											//Clear the keyboard
-			printf("Invalid integer, please try again: ");		//Error message
-		}
-		else {													//To break the loop if conditions are met
-			counter++;
-		}
+		scanf("%d%c", &validInteger, &validChar);
+		if (validChar != '\n') {
+			clrKyb();
+			printf("Invalid integer, please try again: ");
+		} else counter++;
 	}
-	return validInteger;										//Return the valid integer 
+	return validInteger;
 }
+
 double getDbl(void) {
 	double validDouble;
 	int counter = 0;
 	char validChar = ' ';
-
 	while (counter == 0) {
-
-		scanf("%lf%c", &validDouble, &validChar);				//Read in your double followed by enter
-		if (validChar != '\n') {								//If the character after your int isn't a space
-			clrKyb();											//Clear the keyboard
-			printf("Invalid number, please try again: ");		//Error message
-		}
-		else {													//To break the loop if conditions are met
-			counter++;
-		}
+		scanf("%lf%c", &validDouble, &validChar);
+		if (validChar != '\n') {
+			clrKyb();
+			printf("Invalid number, please try again: ");
+		} else counter++;
 	}
-	return validDouble;											//Return the valid double
+	return validDouble;
 }
+
 int getIntLimited(int lowerLimit, int upperLimit) {
 	int choice = 0;
-
-	scanf("%d", &choice);														//Prompt for an integer
-	while (choice < lowerLimit || choice > upperLimit) {						//Checking if the integer is in the correct range
-		printf("Invalid value, %d < value < %d: ", lowerLimit, upperLimit);		//If it's not it prompts you again and tells you 
-		scanf("%d", &choice);													//The correct range
+	scanf("%d", &choice);
+	while (choice < lowerLimit || choice > upperLimit) {
+		printf("Invalid value, %d < value < %d: ", lowerLimit, upperLimit);
+		scanf("%d", &choice);
 	}
 	return choice;
 }
+
 double getDblLimited(double lowerLimit, double upperLimit) {
 	double choice = 0;
-
-	scanf("%lf", &choice);														//Prompt for a floating point
-	while (choice < lowerLimit || choice > upperLimit) {						//Checking if the floating point is in the correct range
-		printf("Invalid value, %lf < value < %lf: ", lowerLimit, upperLimit);	//If it's not it prompts you again and tells you 
-		scanf("%lf", &choice);													//The correct range
+	scanf("%lf", &choice);
+	while (choice < lowerLimit || choice > upperLimit) {
+		printf("Invalid value, %lf < value < %lf: ", lowerLimit, upperLimit);
+		scanf("%lf", &choice);
 	}
 	return choice;
 }
+
 int yes(void) {
 	char choice = ' ';
 	int number = 2;
-
-	scanf("%c", &choice);										//Initial prompt for a character
+	scanf("%c", &choice);
 	clrKyb();
-	choice = toupper(choice);									//Function to make the character uppercase always
-
-	if (choice == 'Y') {										//Checking if the char is a Y or an N
+	choice = toupper(choice);
+	if (choice == 'Y')
 		number = 1;
-	}
-	else if (choice == 'N') {
+	else if (choice == 'N')
 		number = 0;
-	}
-
-	while (number == 2) {										//Loop to make sure that the entered char is valid
-
+	while (number == 2) {
 		printf("Only (Y)es or (N)o are acceptable: ");
 		scanf("%c", &choice);
 		clrKyb();
 		choice = toupper(choice);
-
-		if (choice == 'Y') {
+		if (choice == 'Y')
 			number = 1;
-		}
-		else if (choice == 'N') {
+		else if (choice == 'N')
 			number = 0;
-		}
 	}
-
-	return number;												//Returns either 1 or 0 for Yes or No
+	return number;
 }
-double totalAfterTax(struct Item item) {
+
+double totalAfterTax(struct Item item) {					
 	double total = 0;
-
-	if (item.isTaxed != 0) {
+	if (item.isTaxed != 0)
 		total = ((item.price * item.quantity) * 1) * (TAX + 1);
-	}
-	else {
+	else
 		total = ((item.price * item.quantity) * 1);
-	}
-
 	return total;
 }
+
 int isLowQty(struct Item item) {
-	if (item.quantity <= item.minQuantity) {					//Checks if the quantity of the item is low
+	if (item.quantity <= item.minQuantity)
 		return 1;
-	}
-	else {
+	else
 		return 0;
-	}
 }
+
 void dspItem(struct Item item, int linear) {
 	double total = 0;
-
-	if (linear == LINEAR) {									//Formatting for the LINEAR method of displaying items
+	if (linear == LINEAR) {
 		printf("|%d", item.sku);
 		printf("|%-20s", item.name);
 		printf("|%8.2lf", item.price);
-		if (item.isTaxed == 1) {						//The item prints differently for if it's taxed or not
+		if (item.isTaxed == 1) {
 			printf("|  Yes");
 			total = totalAfterTax(item);
-		}
-		else {
+		} else {
 			printf("|   No");
 			total = totalAfterTax(item);
 		}
 		printf("| %3d ", item.quantity);
 		printf("| %3d ", item.minQuantity);
-
 		printf("|%12.2f|", total);
-		if (isLowQty(item) == 1) {			//The item prints differently if it's low quantity or not
+		if (isLowQty(item) == 1)
 			printf("***\n");
-		}
-		else {
+		else
 			printf("\n");
-		}
 	}
-
-	if (linear == FORM) {									//The same formatting method of printing but this is the FORM way
+	if (linear == FORM) {
 		printf("        SKU: %d\n", item.sku);
 		printf("       Name: %s\n", item.name);
 		printf("      Price: %.2lf\n", item.price);
 		printf("   Quantity: %d\n", item.quantity);
 		printf("Minimum Qty: %d\n", item.minQuantity);
-		if (item.isTaxed == 1) {
+		if (item.isTaxed == 1)
 			printf("   Is Taxed: Yes\n");
-		}
-		else {
+		else
 			printf("   Is Taxed: No\n");
-		}
-		if (item.minQuantity >= item.quantity) {
+		if (item.minQuantity >= item.quantity)
 			printf("WARNING: Quantity low, please order ASAP!!!\n");
-		}
 	}
 }
+
 void listItems(const struct Item item[], int NoOfItems) {
-	int i;
 	double total = 0;
-
 	prnTitle();
-
-	for (i = 0; i < NoOfItems; i++) {				//Loops through and displays the item in the LINEAR way
+	for (int i = 0; i < NoOfItems; i++) {
 		printf("%-4d", i + 1);
-		total += totalAfterTax(item[i]);			//Saves the grand total of all the items
+		total += totalAfterTax(item[i]);
 		dspItem(item[i], LINEAR);
 	}
-
-	prnFooter(total);								//Prints the footer with the grand total of all the items included
+	prnFooter(total);
 }
-int locateItem(const struct Item item[], int NoOfRecs, int sku, int* index) {
-	int counter = 0, i;
 
-	for (i = 0; i < NoOfRecs; i++) {				//Loops through and saves the current position of the counter into the index
+int locateItem(const struct Item item[], int NoOfRecs, int sku, int* index) {
+	int counter = 0;
+	for (int i = 0; i < NoOfRecs; i++) {
 		if (item[i].sku == sku) {
 			*index = counter;
-			return 1;								//Returns 1 if it was successful
+			return 1;								
 		}
 		counter++;
 	}
 	return 0;
 }
+
 struct Item itemEntry(int sku) {
 	struct Item item;
-
 	item.sku = sku;
-
-	printf("        SKU: %d\n", item.sku);	//The prompts and formatting to enter in the information
+	printf("        SKU: %d\n", item.sku);
 	printf("       Name: ");
 	scanf("%20s", item.name);
 	printf("      Price: ");
@@ -270,23 +235,11 @@ struct Item itemEntry(int sku) {
 	item.quantity = getInt();
 	printf("Minimum Qty: ");
 	item.minQuantity = getInt();
-	printf("   Is Taxed: ");							//To see if the item is taxed or not you use the yes() function
+	printf("   Is Taxed: ");
 	item.isTaxed = yes();
-
-	return item;										//Return the item at the end
+	return item;
 }
 
-/*End of Student Milestone 3 definitions and prototypes
-*************************************************************/
-
-/*************************************************************
-Milestone 4 defintions and prototypes:*/
-// write the define statements here:
-#define MAX_ITEM_NO 21
-#define MAX_QTY 999
-#define SKU_MAX 999
-#define SKU_MIN 100
-// function prototypes in order of implementation:
 void search(const struct Item item[], int NoOfRecs);
 void updateItem(struct Item* itemptr);
 void addItem(struct Item item[], int *NoOfRecs, int sku);
@@ -318,18 +271,14 @@ void search(const struct Item item[], int NoOfRecs) {
 	int choice = 0, number;
 	int index;
 
-	while (choice < SKU_MIN || choice > SKU_MAX) {				//if the choice is not between the variables it loops to ask again
+	while (choice < SKU_MIN || choice > SKU_MAX) {
 		printf("Please enter the SKU: ");
 		scanf("%d", &choice);
 	}
-	if (locateItem(item, NoOfRecs, choice, &index) == 1) {		//if locateItem comes back as true, it displays items in FORM
+	if (locateItem(item, NoOfRecs, choice, &index) == 1) {
 		number = index;
 		dspItem(item[number], FORM);
-	}
-	else {														//if locateItem comes back as false, it sends and error
-		printf("Item not found!\n");
-	}
-	
+	} else printf("Item not found!\n");
 }
 
 void updateItem(struct Item* itemptr) {
@@ -337,126 +286,78 @@ void updateItem(struct Item* itemptr) {
 	int choice = 0;
 	printf("Enter new data:\n");
 	item = itemEntry(itemptr->sku);
-
-	printf("Overwrite old data? (Y)es/(N)o: ");			//Ask if you want to update the item
+	printf("Overwrite old data? (Y)es/(N)o: ");
 	choice = yes();
-
-	if (choice == 1) {									//If yes overwrite the item
+	if (choice == 1) {
 		printf("--== Updated! ==--\n");
 		*itemptr = item;
-	}
-	else {												//If no abort
-		printf("--== Aborted! ==--\n");
-	}
-
+	} else printf("--== Aborted! ==--\n");
 }
 
 void addItem(struct Item item[], int *NoOfRecs, int sku) {
 	struct Item number;
-
-	if (*NoOfRecs < MAX_ITEM_NO) {							//If there is space in the array
-		number = itemEntry(sku);							//Call itemEntry and set it to a new item
+	if (*NoOfRecs < MAX_ITEM_NO) {
+		number = itemEntry(sku);
 		printf("Add Item? (Y)es/(N)o: ");
-		if (yes() == 1) {									//If yes add the item to the array
+		if (yes() == 1) {
 			printf("--== Added! ==--\n");
 			item[*NoOfRecs] = number;
 			*NoOfRecs += 1;
-		}
-		else {												//If no abort
-			printf("--== Aborted! ==--\n");
-		}
+		} else printf("--== Aborted! ==--\n");
 	}
-	else {													//If there is no space print storage is full
-		printf("Can not add new item; Storage Full!\n");
-	}
+	else printf("Can not add new item; Storage Full!\n"); 
 }
 
 void addOrUpdateItem(struct Item item[], int* NoOfRecs) {
 	int choice = 0, index = 0, number = 0;
-
-	while (choice < SKU_MIN || choice > SKU_MAX) {				//if the choice is not between the variables it loops to ask again
+	while (choice < SKU_MIN || choice > SKU_MAX) {
 		printf("Please enter the SKU: ");
 		scanf("%d", &choice);
 	}
-	if (locateItem(item, *NoOfRecs, choice, &index) == 1) {		//If item is found display it 
+	if (locateItem(item, *NoOfRecs, choice, &index) == 1) {
 		dspItem(item[index], FORM);
-
 		printf("Item already exists, Update? (Y)es/(N)o: ");
-
 		clrKyb();
 		number = yes();
-
-		if (number == 1) {										//If you selected to update the item call updateItem
-			updateItem(&item[index]);
-		}
-		else {													//If you selected no abort
-			printf("--== Aborted! ==--\n");
-		}
-	}
-	else {														//If it wasn't located call addItem
-		addItem(item, NoOfRecs, choice);
-	}
+		if (number == 1) 
+      updateItem(&item[index]);
+		else 
+      printf("--== Aborted! ==--\n");
+	} else addItem(item, NoOfRecs, choice);
 }
 
 void adjustQty(struct Item item[], int NoOfRecs, int stock) {
 	int choice = 0, index = 0, value = 0, add = 0, sub = 0;
-
-	while (choice < SKU_MIN || choice > SKU_MAX) {				//if the choice is not between the variables it loops to ask again
+	while (choice < SKU_MIN || choice > SKU_MAX) {
 		printf("Please enter the SKU: ");
 		scanf("%d", &choice);
 	}
-
-	if (locateItem(item, NoOfRecs, choice, &index) == 1){			//If the item is located 
-		dspItem(item[index], FORM);									//Diplay in FORM
-		if (stock == STOCK) {										//If item is equal to STOCK
+	if (locateItem(item, NoOfRecs, choice, &index) == 1){
+		dspItem(item[index], FORM);
+		if (stock == STOCK) {
 			value = MAX_QTY - item[index].quantity;												
 			printf("Please enter the quantity to stock; Maximum of %d or 0 to abort: ", value);	//Accept the amount you want to add
 			add = getIntLimited(0, value);
-			if (add == 0) {																		//If 0 it aborts
+			if (add == 0)
 				printf("--== Aborted! ==--\n");
-			}
-			else {																				//If over 0 it adds the amount
+			else {
 				printf("--== Stocked! ==--\n");
 				item[index].quantity += add;
 			}
-		}
-		else {
+		} else {
 			printf("Please enter the quantity to checkout; Maximum of %d or 0 to abort: ", item[index].quantity);	//If CHECKOUT
 			sub = getIntLimited(0, item[index].quantity);					//You can only checkout valid numbers
-			if (sub == 0) {													//If 0 it aborts
+			if (sub == 0) 
 				printf("--== Aborted! ==--\n");
-			}
 			else {															//If over 0 it subtracts from quantity
 				printf("--== Checked out! ==--\n");
 				item[index].quantity -= sub;
-				if (isLowQty(item[index]) == 1) {
+				if (isLowQty(item[index]) == 1)
 					printf("Quantity is low, please reorder ASAP!!!\n");
-				}
 			}
-
 		}
-	}
-	else {
-		printf("SKU not found in storage!\n");								//If SKU isn't located
-	}
+	} else printf("SKU not found in storage!\n");
 }
-/*End of Milestone 4 functions
-******************************************************************/
-
-/*****************************************************************
-Milestone 3 function implementations:
-Please copy your milestone 3 functions here: */
-
-
-
-
-
-
-/*End of Milestone 3 functions.
-*******************************************************************/
-
-/***************************************************************
-Tester Functions DO NOT MODIFY */
 
 void searchTest() {
 	printf("================Search Test:\n");
@@ -465,6 +366,7 @@ void searchTest() {
 	printf("Enter 222: \n");
 	search(GI, GNoOfRecs);
 }
+
 void updateTest() {
 	struct Item I = { 11.11,111,1,11,1,"Ones!" };
 	printf("================Update Test:\n");
@@ -493,6 +395,7 @@ void updateTest() {
 	printf("Updated Item: \n");
 	dspItem(I, FORM);
 }
+
 void addTest() {
 	printf("================Add Test:\n");
 	printf("Total items in Storage: %d, Max no: %d\n", GNoOfRecs, MAX_ITEM_NO);
@@ -527,7 +430,7 @@ void addOrUpdateTest() {
 	GNoOfRecs = MAX_ITEM_NO;
 	printf("================AddOrUpdate Test:\n");
 	printf("Enter 731 and then \'n\':\n");
-	addOrUpdateItem(GI, &GNoOfRecs); // n
+	addOrUpdateItem(GI, &GNoOfRecs); 
 	printf("Enter 731, \'y\' and then:\n"
 		"       Name: Apple\n"
 		"      Price: 1.80\n"
@@ -535,11 +438,11 @@ void addOrUpdateTest() {
 		"Minimum Qty: 11\n"
 		"   Is Taxed: n\n"
 		"Overwrite old data? (Y)es/(N)o: y\n");
-	addOrUpdateItem(GI, &GNoOfRecs); // yes new data Yes
+	addOrUpdateItem(GI, &GNoOfRecs); 
 	printf("Updated Item: \n");
 	dspItem(GI[16], FORM);
 	printf("Enter 444: \n");
-	addOrUpdateItem(GI, &GNoOfRecs); //n
+	addOrUpdateItem(GI, &GNoOfRecs); 
 }
 
 void adjustQtyTest() {

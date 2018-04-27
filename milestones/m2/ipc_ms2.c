@@ -25,7 +25,7 @@ void GrocInvSys(void) {
 	int number = 0;
 
 	while (counter == 0) {
-		switch (menu()) {						//Switch statement for the different options
+		switch (menu()) {
 		case 1:
 			printf("List Items!\n");
 			pause();
@@ -55,98 +55,80 @@ void GrocInvSys(void) {
 			pause();
 			break;
 		case 0:
-			printf("Exit the program? (Y)es/(N)o : ");		//Uses the yes function to take either a Y or N for exiting
+			printf("Exit the program? (Y)es/(N)o : ");
 			number = yes();
-			if (number == 1) {
+			if (number == 1)
 				counter++;
-			}
 			break;
 		}
-
-
 	}
 }
+
 int yes(void) {
 	char choice = ' ';
 	int number = 2;
-
-	scanf("%c", &choice);										//Initial prompt for a character
+	scanf("%c", &choice);
 	clrKyb();
-	choice = toupper(choice);									//Function to make the character uppercase always
-
-	if (choice == 'Y') {										//Checking if the char is a Y or an N
+	choice = toupper(choice);
+	if (choice == 'Y')
 		number = 1;
-	}
-	else if (choice == 'N') {
+	else if (choice == 'N')
 		number = 0;
-	}
-
-	while (number == 2) {										//Loop to make sure that the entered char is valid
-
+	while (number == 2) {
 		printf("Only (Y)es or (N)o are acceptable: ");
 		scanf("%c", &choice);
 		clrKyb();
 		choice = toupper(choice);
-
-		if (choice == 'Y') {
+		if (choice == 'Y')
 			number = 1;
-		}
-		else if (choice == 'N') {
+		else if (choice == 'N')
 			number = 0;
-		}
 	}
-
-	return number;												//Returns either 1 or 0 for Yes or No
+	return number;
 }
-int menu(void) {			//Displays the menu
+
+int menu(void) {
 	int choice = 10;
 	printf("1- List all items\n2- Search by SKU\n3- Checkout an item\n4- Stock an item\n5- Add new item or update item\n"
 		"6- delete item\n7- Search by name\n0- Exit program\n> ");
-	choice = getIntLimited(0, 7);		//Sets the limits of the int that it will accept
-	return choice;						//Return the choice
-
+	choice = getIntLimited(0, 7);
+	return choice;
 }
-
-// copy MS1 functions here
 
 void clrKyb(void) {
 	char choice = 'a';
-
-	while (choice != '\n') {				//Loops until it reaches a return
+	while (choice != '\n')
 		scanf("%c", &choice);
-	}
 }
+
 void pause(void) {
 	printf("Press <ENTER> to continue...");
-	clrKyb();										//Accepts an enter to end the function
+	clrKyb();
 }
+
 int getInt(void) {
 	int validInteger, counter = 0;
 	char validChar = ' ';
-
 	while (counter == 0) {
-
-		scanf("%d%c", &validInteger, &validChar);				//Read in your integer followed by enter
-		if (validChar != '\n') {								//If the character after your int isn't a space
-			clrKyb();											//Clear the keyboard
-			printf("Invalid integer, please try again: ");		//Error message
-		}
-		else {													//To break the loop if conditions are met
-			counter++;
-		}
+		scanf("%d%c", &validInteger, &validChar);
+		if (validChar != '\n') {
+			clrKyb();
+			printf("Invalid integer, please try again: ");
+		} else counter++;
 	}
-	return validInteger;										//Return the valid integer 
+	return validInteger;
 }
+
 void welcome(void) {
 	printf("---=== Grocery Inventory System ===---\n\n");
 }
+
 int getIntLimited(int lowerLimit, int upperLimit) {
 	int choice = 0;
-
-	choice = getInt();														//Prompt for an integer chicking if actually valid
-	while (choice < lowerLimit || choice > upperLimit) {						//Checking if the integer is in the correct range
-		printf("Invalid value, %d < value < %d: ", lowerLimit, upperLimit);		//If it's not it prompts you again and tells you 
-		choice = getInt();														//Prompt for an integer again
+	choice = getInt();
+	while (choice < lowerLimit || choice > upperLimit) {
+		printf("Invalid value, %d < value < %d: ", lowerLimit, upperLimit);
+		choice = getInt();
 	}
 	return choice;
 }	

@@ -19,9 +19,7 @@ void checkPrice(const struct Item items[], const int size);
 
 int main(void) {
 	struct Item item[MAX_ITEMS];
-
-	int size = 0;
-	int counter = 0;
+	int size = 0, counter = 0;
 	
 	clear();
 	printf("Welcome to the Shop\n===================\n");
@@ -50,117 +48,99 @@ int main(void) {
 		}
 	}
 	system("pause");
-	
-
 }
 
-void menu(void) {  // The function displays the menu
+void menu(void) {
 	printf("Please select from the following options:\n");
-
-
-		printf("1) Display the inventory.\n");
-		printf("2) Add to shop.\n");
-		printf("3) Price check.\n");
-		printf("4) Clear screen.\n");
-		printf("0) Exit.\n");
-		printf("Select: ");
-
+	printf("1) Display the inventory.\n");
+	printf("2) Add to shop.\n");
+	printf("3) Price check.\n");
+	printf("4) Clear screen.\n");
+	printf("0) Exit.\n");
+	printf("Select: ");
 }
+
 int validate(const int high, const int low) {
 	int choice;
-	
-	scanf("%d", &choice);								//prompt for your integer
-	
-	while (choice < low || choice > high) {			//checks if it is in the range and loops until a valid number is entered
+	scanf("%d", &choice);
+	while (choice < low || choice > high) {
 		printf("Invalid input, try again: ");
 		scanf("%d", &choice);
 	}
 	return choice;
 }
+
 void clear() {
-	int i;
-
-	for (i = 0; i < 40; i++ ) {						//Loops 40 new lines
+	for (int i = 0; i < 40; i++ )
 		printf("\n");
-	}
 }
+
 void displayInventory(const struct Item items[], const int size) {
-	int i;
-
-	printf("\n\nInventory\n=========================================\n");		//displaying the inventory
+	printf("\n\nInventory\n=========================================\n");
 	printf("Sku         Price       Quanity\n");
-
-	for (i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++)
 		printf("%01d%13.2f%8d         \n", items[i].sku_, items[i].price_, items[i].quantity_);
-	}
 	printf("=========================================\n");
 }
-int searchInventory(const struct Item items[], const int sku_item, const int size) {
-	int i;
-	int counter = 1;
 
-	for (i = 0; i < size; i++) {					//Looping through to see if the sku is found
-		if (items[i].sku_ == sku_item) {			//If the sku is found it returns the counter - 1 so that it reflects the 
+int searchInventory(const struct Item items[], const int sku_item, const int size) {
+	int counter = 1;
+	for (int i = 0; i < size; i++) {			
+		if (items[i].sku_ == sku_item) {
 			counter -= 1;
-			return counter;							//correct index number
-		}
-		else {
-			counter++;
-		}
+			return counter;					
+		} else counter++;
 	}
-		if (counter >= size) {					//Checking if the counter is equal to the size of the array to see if 
-			counter = -1;						//It has ran through the loop completely
-			return counter;						//And returning the - 1 if it has not found any results
+		if (counter >= size) {		
+			counter = -1;						
+			return counter;					
 	}
 	
 }
+
 void addItem(struct Item items[], int *size) {
 	int sku;
 	int quantity;
 	int index;
 	double price;
 	
-	printf("Please input a SKU number: ");								//Inputs
+	printf("Please input a SKU number: ");
 	scanf("%d", &sku);
 	printf("Quantity: ");
 	scanf("%d", &quantity);
 
-	index = searchInventory(items, sku, *size);							//Saving the index number to a holder variable			
+	index = searchInventory(items, sku, *size);
 
-	if (index == -1) {													//If the index is -1 it means it isn't in the array
-		if (*size == MAX_ITEMS) {										//Checking if full
+	if (index == -1) {
+		if (*size == MAX_ITEMS)
 			printf("Inventory is full.\n");
-		}
-		if (*size != MAX_ITEMS){										//If not full then add the new elements to the next
-			printf("Price: ");											//element of the array
+		if (*size != MAX_ITEMS) {								
+			printf("Price: ");
 			scanf("%lf", &price);	
 			items[*size].sku_ = sku;
 			items[*size].quantity_ = quantity;
 			items[*size].price_ = price;
-			*size += 1;	//incrementing the size for the next element
+			*size += 1;	
 			printf("The item is successfully added to the inventory.\n");
 		}
 	}
-	if (index > -1){															//Updating the array if the sku is found
+	if (index > -1) {	
 		printf("The item exists in the repository, quantity is updated.\n");
 		items[index].quantity_ = quantity;
 	}
 
 }
-void checkPrice(const struct Item items[], const int size) {
-	int sku = 0, counter = 0, i = 0;								//checking if the item is in the array
-	scanf("%d", &sku);												//then checking what the price of the item is
 
-	for (i = 0; i <= size; i++) {
+void checkPrice(const struct Item items[], const int size) {
+	int sku = 0, counter = 0;
+	scanf("%d", &sku);
+	for (int i = 0; i <= size; i++) {
 		if (sku == items[i].sku_) {
 			printf("Item %d costs $%0.2f\n", items[i].sku_, items[i].price_);
 			counter++;
 		}
 	}
-
-	if (counter == 0) {
+	if (counter == 0)
 		printf("Item does not exist in the shop! Please try again.\n");
-	}
-
 	counter = 0;
 }
